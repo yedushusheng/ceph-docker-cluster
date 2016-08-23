@@ -1,0 +1,80 @@
+ceph01-daemon-mon:
+  image: dockerhub.uniswdc.com/ceph/daemon:0.94.3-90
+  hostname: ceph01
+  net: host
+  labels:
+    io.rancher.scheduler.affinity:host_label: hostname=ceph01
+  volumes:
+    - /etc/ceph:/etc/ceph
+    - /var/lib/ceph/:/var/lib/ceph/
+  environment:
+    - MON_IP=192.168.10.81
+    - CEPH_PUBLIC_NETWORK=192.168.10.0/24
+  command: mon
+
+ceph01-daemon-osd0:
+  image: dockerhub.uniswdc.com/ceph/daemon:0.94.3-90
+  hostname: ceph01
+  pid: host
+  privileged: true
+  net: host
+  labels:
+    io.rancher.scheduler.affinity:host_label: hostname=ceph01
+  volumes:
+    - /etc/ceph:/etc/ceph
+    - /var/lib/ceph/:/var/lib/ceph/
+    - /dev/:/dev/
+  environment:
+    - OSD_DEVICE=/dev/sdb
+    - OSD_FORCE_ZAP=1
+  command: osd_ceph_disk
+  links:
+    - ceph01-daemon-mon
+
+ceph01-daemon-osd1:
+  image: dockerhub.uniswdc.com/ceph/daemon:0.94.3-90
+  hostname: ceph01
+  pid: host
+  privileged: true
+  net: host
+  labels:
+    io.rancher.scheduler.affinity:host_label: hostname=ceph01
+  volumes:
+    - /etc/ceph:/etc/ceph
+    - /var/lib/ceph/:/var/lib/ceph/
+    - /dev/:/dev/
+  environment:
+    - OSD_DEVICE=/dev/sdc
+    - OSD_FORCE_ZAP=1
+  command: osd_ceph_disk
+  links:
+    - ceph01-daemon-osd0
+
+ceph01-daemon-mds:
+  image: dockerhub.uniswdc.com/ceph/daemon:0.94.3-90
+  hostname: ceph01
+  net: host
+  labels:
+    io.rancher.scheduler.affinity:host_label: hostname=ceph01
+  volumes:
+    - /etc/ceph:/etc/ceph
+    - /var/lib/ceph/:/var/lib/ceph/
+  environment:
+    - CEPHFS_CREATE=1
+  command: mds
+  links:
+    - ceph01-daemon-osd1
+
+ceph01-daemon-rgw:
+  image: dockerhub.uniswdc.com/ceph/daemon:0.94.3-90
+  hostname: ceph01
+  net: host
+  labels:
+    io.rancher.scheduler.affinity:host_label: hostname=ceph01
+  volumes:
+    - /etc/ceph:/etc/ceph
+    - /var/lib/ceph/:/var/lib/ceph/
+  command: rgw
+  links:
+    - ceph01-daemon-mds
+
