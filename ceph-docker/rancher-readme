@@ -1,0 +1,10 @@
+利用rancher部署ceph集群的基本步骤：
+1、这里新建3台虚拟机：
+ceph01:192.168.10.81
+ceph02:192.168.10.82
+ceph03:192.168.10.83
+2、将3台主机添加到rancher
+3、在rancher中修改每个主机的hostname，这个对应于rancher-compose中的labels标签中的hostname，而不是主机etc目录下的主机名
+4、编写yml文件
+5、新建stack
+6、启动集群
