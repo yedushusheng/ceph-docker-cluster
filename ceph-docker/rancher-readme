@@ -12,3 +12,5 @@ mds:ceph01
 4、编写yml文件
 5、新建stack
 6、启动集群
+
+注：rancher作为容器部署工具，kubernetes是容器编排工具
